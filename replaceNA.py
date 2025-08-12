@@ -37,12 +37,12 @@ def replace_na_with_blank(excel_file_path, sheet_name=0, output_file_path=None):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) < 2:
-        print("Usage: python replaceNA.py <excel_file_path>")
-    else:
-        replace_na_with_blank(sys.argv[1])
+# if __name__ == "__main__":
+#     import sys
+#     if len(sys.argv) < 2:
+#         print("Usage: python replaceNA.py <excel_file_path>")
+#     else:
+#         replace_na_with_blank(sys.argv[1])
 
 # --- How to Use ---
 # Example 1: Replace in 'my_data.xlsx' and overwrite the original file
