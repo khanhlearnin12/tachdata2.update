@@ -4,9 +4,12 @@ from flask import Flask , render_template
 import main
 import sys
 
-app = Flask(__name__,template_folder='templates')
+app = Flask(__name__,template_folder='templates', waiting_web_page ='waiting-web-page')
 # run_with_ngrok(app)
 
+@app.route('/waiting')
+def waiting_web_page():
+    return render_template('waiting-web-page/index.html')
 
 @app.route('/chosingpath')
 def chosingpath():
