@@ -4,18 +4,18 @@ from flask import Flask , render_template
 import main
 import sys
 
-app = Flask(__name__,template_folder='templates', waiting_web_page ='waiting-web-page')
+app = Flask(__name__,template_folder='templates' )
 # run_with_ngrok(app)
 
-@app.route('/waiting')
+@app.route('/')
 def waiting_web_page():
-    return render_template('waiting-web-page/index.html')
+    return render_template('waiting-web-page/404index.html')
 
-@app.route('/chosingpath')
+@app.route('/chosingpath', methods=['POST'])
 def chosingpath():
     return "Hello, friends"
 
-@app.route('/')
+@app.route('/main')
 def index():
     return render_template('index.html')
 
