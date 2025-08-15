@@ -9,7 +9,7 @@ app = Flask(__name__,template_folder='templates' )
 
 @app.route('/')
 def waiting_web_page():
-    return render_template('waiting-web-page/404index.html')
+    return render_template('404index.html')
 
 @app.route('/chosingpath', methods=['POST'])
 def chosingpath():
