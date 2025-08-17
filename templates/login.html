@@ -1,0 +1,57 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Python Terminal</title>
+    </head>
+    <body>
+        <textarea id="terminalOutput" rows="20" cols="80" readonly></textarea><br>
+        <input type="text" id="commandInput" size="70" placeholder="Enter command"><br>
+        <button id="executeButton">Execute</button>
+
+        <script>
+            document.addEventListener("DOMContentLoaded",()=>{
+                const commandOutput = document.getElementById('TerminalOuput');
+                const commandInput = document.getElementById('commandInput');
+                const executeButton = document.getElementById('excuteButton')
+
+
+                executeButton.addEventListener('click', excuteCommand );
+                commandInput.addEventListener('keypress', (e)=> {
+                    if(e.key ==="Enter"){
+                        excuteCommand();
+                    }
+                });
+
+                async function excuteCommand(){
+                    const command = commandInput.value.trim();
+                    if (!command) return;
+
+
+                    terminalOuput.value += `> ${command}\n`;
+                    commandInput.value = '';
+
+                    try {
+                   const response = await fetch('/execute_command', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ command: command }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        terminalOutput.value += data.output + '\n';
+                    } else {
+                        terminalOutput.value += `Error: ${data.error || 'Unknown error'}\n`;
+                        }
+                    } catch (error) {
+                         terminalOutput.value += `Network Error: ${error.message}\n`;
+                        }
+                    terminalOutput.scrollTop = terminalOutput.scrollHeight; // Scroll to bottom
+                }
+            });
+        </script>
+    </body>
+    </html>

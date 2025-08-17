@@ -8,6 +8,7 @@
     <!-- <link rel="404-page"href="waiting-web-page/index.html">  -->
     <link rel="website_icon" type="png" href="/static/icons/terminal1.png>
     <script src="https://cdn.tailwindcss.com">
+    
     <style>
         body { 
             display: flexbox;
@@ -94,110 +95,71 @@
         <textarea
             id="typing-box"
             class="w-full h-64 p-4 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
-            placeholder="terminal part here...."
+            /* placeholder=">" */
         ></textarea>
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Corrected IDs to match the HTML
-            const fileInput = document.getElementById('file-upload');
-            const postButton = document.getElementById('post-button');
-            const terminalOutput = document.getElementById('typing-box');
-            
-            // This is a placeholder as the actual Python functions are on the backend
-            const columnsToCheck = ['CC_WSR95', 'FDI_PCA_WSR95', 'WUI_WSR95'];
-
-            // Function to append a message to the terminal-like textarea
-            function logToTerminal(message) {
-                terminalOutput.value += message + '\n';
-                // Auto-scroll to the bottom of the textarea
-                terminalOutput.scrollTop = terminalOutput.scrollHeight;
-            }
-
-            // Initially, the terminal is ready
-            logToTerminal('Terminal ready.');
-            logToTerminal('Awaiting file upload...');
-
-            // The post button now has an event listener to trigger the process
-            postButton.addEventListener('click', () => {
-                const file = fileInput.files[0];
-                if (!file) {
-                    logToTerminal('Error: No file selected. Please choose a file.');
-                    return;
-                }
-
-                // Clear the terminal for a new process
-                terminalOutput.value = '';
-                logToTerminal('>> Starting file processing...');
-                
-                // Disable the button to prevent multiple submissions
-                postButton.disabled = true;
-                postButton.textContent = 'Processing...';
-
-                const reader = new FileReader();
-
-                reader.onload = (e) => {
-                    logToTerminal('File read successful.');
-                    logToTerminal('Parsing workbook...');
-
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        
-                        const sheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[sheetName];
-                        logToTerminal(`Processing sheet: "${sheetName}"`);
-                        
-                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                        logToTerminal(`Found ${jsonData.length} rows. Filtering...`);
-
-                        const cleanedData = jsonData.filter(row => {
-                            return columnsToCheck.every(col => {
-                                const value = row[col];
-                                return value != null && String(value).trim() !== '';
-                            });
-                        });
-                        
-                        logToTerminal(`Filtered ${jsonData.length - cleanedData.length} blank rows.`);
-                        logToTerminal(`Remaining rows: ${cleanedData.length}`);
-                        
-                        // Proceed to saving the new file
-                        const newWorksheet = XLSX.utils.json_to_sheet(cleanedData);
-                        const newWorkbook = XLSX.utils.book_new();
-                        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Cleaned Data");
-
-                        const originalName = file.name;
-                        const fileNameParts = originalName.split('.');
-                        const extension = fileNameParts.pop();
-                        const baseName = fileNameParts.join('.');
-                        const outputFileName = `cleaned-${baseName}.${extension}`;
-                        
-                        logToTerminal(`Creating new file: "${outputFileName}"`);
-                        XLSX.writeFile(newWorkbook, outputFileName);
-                        
-                        logToTerminal(`Process completed successfully.`);
-                        logToTerminal(`File downloaded: ${outputFileName}`);
-
-                    } catch (error) {
-                        logToTerminal(`Error during processing: ${error.message}`);
-                        console.error(error);
-                    } finally {
-                        // Re-enable the button after process
-                        postButton.disabled = false;
-                        postButton.textContent = 'Post';
-                    }
-                };
-
-                reader.onerror = (e) => {
-                    logToTerminal('Error reading the file.');
-                    postButton.disabled = false;
-                    postButton.textContent = 'Post';
-                    console.error(e);
-                };
-                
-                reader.readAsArrayBuffer(file);
-            });
-        });
-        </script>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const terminal = document.getElementById('typing-box');
+        const prompt = '> ';
+
+        // Set the initial value and focus on the textarea.
+        terminal.value = prompt;
+        // This line is commented out in your code. It's a good practice to include it
+        // to automatically place the cursor in the terminal when the page loads.
+        terminal.focus(); 
+
+        terminal.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+
+                // Split the content by newlines to get individual lines.
+                const lines = terminal.value.split('\n');
+                
+                // Get the last line where the user typed their command.
+                const lastLine = lines[lines.length - 1];
+                
+                // Extract the command by removing the prompt and any leading/trailing whitespace.
+                const command = lastLine.substring(prompt.length).trim();
+                
+                let output = '';
+
+                switch (command) {
+                    case 'help':
+                        output = `
+Available commands:
+  help: Show this help message.
+  clear: Clear the terminal screen.
+  echo <message>: Repeat the message.
+                        `.trim();
+                        break;
+                    case 'clear':
+                        // If the command is 'clear', reset the textarea to just the prompt.
+                        terminal.value = prompt;
+                        return; // Exit the function to prevent adding a newline.
+                    case 'date':
+                        output = new Date().toLocaleString();
+                        break;
+
+                    
+                    default:
+                        if (command.startsWith('echo')) {
+                            // If the command is 'echo', get the message after 'echo'.
+                            output = command.substring(5).trim();
+                        } else {
+                            // If the command is not recognized, show an error message.
+                            output = `Error: command not found: ${command}`;
+                        }
+                }
+                
+                // Add the output and a new prompt line to the textarea's value.
+                terminal.value += '\n' + output + '\n' + prompt;
+
+                // Automatically scroll to the bottom to show the latest output.
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        });
+    });
+</script>
 </body>
 </html>

@@ -18,19 +18,19 @@ def chosingpath(sys=sys):
 
 @app.route('/main')
 def index(sys=sys):
-    image_url  = url_for('static', filename='/picture/icons/terminal.png')
+    image_url  = url_for('static', filename='/icons/terminal1.png')
     fontend = render_template('index.html')
     return render_template('index.html', image_url=image_url, fontend=fontend)
-
+    
 @app.route('/messenger')
 def messenger():
     return "this is messenger page" 
 
-# @app.route('/delete_rows', methods=["POST"])
-# def delete_rows_with_blank_columns():
-#     excel_file_path = ''
-#     output_file_path = ''
-#     main.delete_rows_with_blank_columns(excel_file_path, output_file_path)
+# @app.route('/main/process', methods=["POST"])
+# def process():
+#     python_code = main.chosing_path(None)
+#     image_url  = url_for('static', filename='/icons/terminal1.png')
+#     return render_template('index.html', image_url=image_url,code = python_code)
 
 if __name__ == "__main__":
     # app.run()

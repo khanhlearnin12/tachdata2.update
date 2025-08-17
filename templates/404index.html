@@ -102,25 +102,32 @@
     <h1 class="brokenpage">THE PAGE IS <br>BROKEN</h1>
     <p class="promise">(We will be back soon)</p>
     <!-- <img src="/static/background/download.jpg" alt="pandameme" class="panda"> -->
-    <button class="catch-me" id="catch-me">Close it by press this button</button>
+    <button class="catch-me" id="catch-me"> close by press this button</button>
+    <button class="press-in" id="press-in">get in to page</button>
     <script>
-        const button = document.getElementById('catch-me');
-        let hoverCount = 0;
+            const button = document.getElementById('catch-me');         
+            const logIn = document.getElementById('press-in');
 
-        button.addEventListener('mouseover', () => {
-            if (hoverCount < 5) {
-                const x = Math.random() * window.innerWidth;
-                const y = Math.random() * window.innerHeight;
-                button.style.left = `${x}px`;
-                button.style.top = `${y}px`;
-                hoverCount++;
-            }
-        });
+            let hoverCount = 0;
 
-        // close page
-        button.addEventListener('click', () => {
-            window.close();
-        });
+            button.addEventListener('mouseover', () => {
+                if (hoverCount < 5) {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    button.style.left = `${x}px`;
+                    button.style.top = `${y}px`;
+                    hoverCount++;
+                }
+            });
+
+            // close page
+            button.addEventListener('click', () => {
+                window.close;
+            });
+           
+            logIn.addEventListener('click', ()=>{
+                window.location.href='/main';
+            });
     </script>
 </div>
 </body>

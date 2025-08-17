@@ -5,3 +5,6 @@
 /output
 /__pycache__
 /venv
+/test.py
+/templates/test.html 
+/test.py
