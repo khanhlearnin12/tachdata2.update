@@ -5,33 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title >Web tachdata</title>
     <!-- add 404 by using waiting-web-page/index.html -->
-    <!-- <link rel="404-page" href="waiting-web-page/index.html">  -->
-    <link rel="website_icon" type="png" href="picture/terminal1.png">
+    <!-- <link rel="404-page"href="waiting-web-page/index.html">  -->
+    <link rel="website_icon" type="png" href="/static/icons/terminal1.png>
+    <script src="https://cdn.tailwindcss.com">
     <style>
-        body {
-            /* display: flexbox; */
-            background-color:aqua;
-            justify-items: center;
-        }
-        upload_form {
+        body { 
+            display: flexbox;
+            background-image: url("/static/background/bigdatebackground.jpg");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin : 0;
+            padding : 0;
+
+        }
+        upload_form {
+            display: flex;
+            flex-direction  : column;
+            align-items: center;
             justify-content: space-around;
         }
+        textarea {
+            width: 900px;
+            height: 250px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            resize: none;
+        }
+        select {
+            width: 940px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+            font-size: 16px;
+        }
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 5px; 
     </style>
 </head>
 <body>
     <h1>Welcome to Web Tachdata</h1>
-    <p>This is a web interface for tachdata.</p>
-    <!-- <form action="/chosingpath" method="post">
-        <button type="submit">Start</button> -->
+    <p>Can you first upload your file</p>
     <!-- upload file -->
-    <form action="/chosingpath" method="POST" enctype="multipart/form-data" alt="upload_form">
+    <form id="process-botton" enctype="multipart/form-data" alt="upload_form">
         <label for="file">Upload a file:</label>
         <input type="file" id="file" name="file" accept=".txt, .csv, .xlsx">
-        <button type="submit">Submit</button>
+        <button type="post">post</button>
     </form>
-    
+    <div alt="output_part",
+     class="bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full">
+        <!-- A simple heading -->
+        <h3 alt="title">Select your task</h3>
+        <select name="sellect_part" 
+            id="user_choise",
+            class="w-full p-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            >
+            <option value="1">1. thay đổi biến</option>
+            <option value="2">2. chuyển từ dạng text sang num</option>
+            <option value="3">3. Xóa hàng với từng biến được chọn</option>
+            <!-- <option value="data_transformation">Data Transformation</option>
+            <option value="data_export">Data Export</option> -->
+        </select>
+        <h3 alt="terminal">Terminal Part</h3>
+        <textarea
+            id="typing-box"
+            class="w-full h-64 p-4 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+            placeholder="terminal part here...."
+        ></textarea>
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Corrected IDs to match the HTML
+            const fileInput = document.getElementById('file-upload');
+            const postButton = document.getElementById('post-button');
+            const terminalOutput = document.getElementById('typing-box');
+            
+            // This is a placeholder as the actual Python functions are on the backend
+            const columnsToCheck = ['CC_WSR95', 'FDI_PCA_WSR95', 'WUI_WSR95'];
+
+            // Function to append a message to the terminal-like textarea
+            function logToTerminal(message) {
+                terminalOutput.value += message + '\n';
+                // Auto-scroll to the bottom of the textarea
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+
+            // Initially, the terminal is ready
+            logToTerminal('Terminal ready.');
+            logToTerminal('Awaiting file upload...');
+
+            // The post button now has an event listener to trigger the process
+            postButton.addEventListener('click', () => {
+                const file = fileInput.files[0];
+                if (!file) {
+                    logToTerminal('Error: No file selected. Please choose a file.');
+                    return;
+                }
+
+                // Clear the terminal for a new process
+                terminalOutput.value = '';
+                logToTerminal('>> Starting file processing...');
+                
+                // Disable the button to prevent multiple submissions
+                postButton.disabled = true;
+                postButton.textContent = 'Processing...';
+
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    logToTerminal('File read successful.');
+                    logToTerminal('Parsing workbook...');
+
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        logToTerminal(`Processing sheet: "${sheetName}"`);
+                        
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        logToTerminal(`Found ${jsonData.length} rows. Filtering...`);
+
+                        const cleanedData = jsonData.filter(row => {
+                            return columnsToCheck.every(col => {
+                                const value = row[col];
+                                return value != null && String(value).trim() !== '';
+                            });
+                        });
+                        
+                        logToTerminal(`Filtered ${jsonData.length - cleanedData.length} blank rows.`);
+                        logToTerminal(`Remaining rows: ${cleanedData.length}`);
+                        
+                        // Proceed to saving the new file
+                        const newWorksheet = XLSX.utils.json_to_sheet(cleanedData);
+                        const newWorkbook = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Cleaned Data");
+
+                        const originalName = file.name;
+                        const fileNameParts = originalName.split('.');
+                        const extension = fileNameParts.pop();
+                        const baseName = fileNameParts.join('.');
+                        const outputFileName = `cleaned-${baseName}.${extension}`;
+                        
+                        logToTerminal(`Creating new file: "${outputFileName}"`);
+                        XLSX.writeFile(newWorkbook, outputFileName);
+                        
+                        logToTerminal(`Process completed successfully.`);
+                        logToTerminal(`File downloaded: ${outputFileName}`);
+
+                    } catch (error) {
+                        logToTerminal(`Error during processing: ${error.message}`);
+                        console.error(error);
+                    } finally {
+                        // Re-enable the button after process
+                        postButton.disabled = false;
+                        postButton.textContent = 'Post';
+                    }
+                };
+
+                reader.onerror = (e) => {
+                    logToTerminal('Error reading the file.');
+                    postButton.disabled = false;
+                    postButton.textContent = 'Post';
+                    console.error(e);
+                };
+                
+                reader.readAsArrayBuffer(file);
+            });
+        });
+        </script>
+    </div>
 </body>
 </html>
