@@ -25,6 +25,9 @@ def delete_rows_with_blank_columns(excel_file_path, output_file_path=None):
     df_cleaned.to_excel(output_file_path, index=False)
     print(f"Rows with blank values in {columns_to_check} deleted. Saved to {output_file_path}")
 
+    return output_file_path
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python Delete_row.py <excel_file_path>")
