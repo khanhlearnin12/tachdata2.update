@@ -13,7 +13,7 @@ UPLOAD_FOLDER  = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-app.config[UPLOAD_FOLDER] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/')
 def waiting_web_page():
@@ -31,10 +31,11 @@ def delete_rows():
         filename = secure_filename (file.filename)
         input_path = os.path.join(app.config['UPLOAD_FOLDER'],filename)
         file.save(input_path)
-
-        output_path = delete_rows_with_blank_columns(input_path)
-
-        return jsonify({"message":"file processed successfully ","output_path": output_path})
+        try: 
+            output_path = delete_rows_with_blank_columns(input_path)
+            return jsonify({"message": f"File processed successfully. Cleaned file saved at {output_path}"})
+        except KeyError as e:
+            return jsonify({"error": str(e)}), 400
 
 
 @app.route('/main')
