@@ -1,9 +1,11 @@
 #!/usr/bin/python
-from flask import Flask , render_template , url_for , request, jsonify
+from flask import Flask , render_template , url_for , request, jsonify, send_from_directory
 # from flask_ngrok import run_with_ngrok
 import sys
 import os
 import pandas as pd
+import subprocess
+from waitress import serve
 from werkzeug.utils import secure_filename # this how to sanitize filename function 
 from Delete_row import delete_rows_with_blank_columns 
 from replaceNA import replace_na_with_blank
@@ -75,11 +77,9 @@ def replacevar():
         except KeyError as e:
             return jsonify({"error": str(e)}), 400
 
-
-
-
-# @app.route('/api/texttoNum', methods=['POST'])
-# def texttoNum():
+@app.route('/output/<path:filename>')
+def download_file(filename):
+    return send_from_directory('output', filename, as_attachment=True)
 
 @app.route('/main')
 def index(sys=sys):
@@ -99,7 +99,16 @@ def save_output_file(df, filename):
     df.to_excel(output_path, index=False)
     return output_path
 
-if __name__ == "__main__":
-    # app.run()
-    app.run(debug=True, host='localhost', port=5000)
+mode = "prod" #dev or prod
 
+if __name__ == "__main__":
+    if mode == "dev":
+        app.run(debug=True, host='localhost', port=8080)
+    elif mode == "prod" :
+        print("login to the webpage as http://localhost:8080")
+        command = "start cmd /k ngrok http http://localhost:8080"
+        subprocess.Popen(command, shell=True)
+        serve(app, host='localhost', port=8080, threads=2, url_prefix="/tachdata")
+    else :
+        print("Unknow command")
+        exit

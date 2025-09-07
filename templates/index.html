@@ -107,6 +107,8 @@
         <label for="file">Upload a file:</label>
         <input id="file" type="file" name="file" accept=".txt, .csv, .xlsx">
         <button id="upload-button" type="button">Process File</button>
+        <button id="download-button" type="button">Download File</button>
+        <label for="download-button">Success full file</label>
     </form>
 
 
@@ -118,6 +120,7 @@
             id="user_choice",
             class="w-full p-3 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
+            <option value="0">chọn task bạn cần</option>
             <option value="1">1. thay đổi biến</option>
             <option value="2">2. chuyển từ dạng text sang num</option>
             <option value="3">3. Xóa hàng với từng biến được chọn</option>
@@ -136,14 +139,15 @@
         const terminal = document.getElementById('typing-box');
         const userchoice = document.getElementById('user_choice');
         const form = document.getElementById('process-botton');
+        const download = document.getElementById('download-button');
         let prompt = '> '; // use let to easy to modify 
 
 
         //update the terminal 
         function updatePrompt(newPrompt){
             prompt = newPrompt;
-
             const lines = terminal.value.split('\n');
+
             lines[lines.length - 1] = prompt;
             terminal.value = lines.join('\n');
             terminal.scrollTop = terminal.scrollHeight;
@@ -170,8 +174,34 @@
             const selectOption = userchoice.value;
         });
 
-
+        
         const uploadButton = document.getElementById('upload-button');
+        let lastOutputPath = null; // Store the last uploaded file
+
+
+        // Download button event listener
+        const downloadLabel = document.querySelector('label[for="download-button"]');
+        download.addEventListener('click', () => {
+            if (!lastOutputPath) {
+                terminal.value += '\n' + 'No file available for download. Please process a file first.' + '\n' + prompt;
+                terminal.scrollTop = terminal.scrollHeight;
+                return;
+            }
+
+            //initiate the download
+            const link = document.createElement('a');
+            link.href = `output/${encodeURIComponent(lastOutputPath)}`;
+            link.download = lastOutputPath; 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            terminal.value += '\n' + 'Download started...' + '\n' + prompt;
+            terminal.value += `\nDownloaded successful file: ${lastOutputPath}\n${prompt}`;
+            terminal.scrollTop = terminal.scrollHeight;
+        });
+
+        //this is the event listener for the upload button
         uploadButton.addEventListener('click',(event)=>{
             const fileInput = document.getElementById('file');
             const file = fileInput.files[0]; //not reset after click
@@ -221,12 +251,15 @@
                     const data = await response.json();
                     if (data.error) {
                         terminal.value += `\nError: ${data.error}\n${prompt}`;
+                        lastOutputPath = null; // Reset last uploaded file on error
                     } else {
                         terminal.value += `\nSuccess: ${data.message}\nOuput file at: ${data.output_path}\n${prompt}`;
+                        lastOutputPath = data.output_path; // Store the output file path
                     }
                 } else {
                     const text = await response.text();
                     terminal.value += `\nUnexpected response from server: ${text}\n${prompt}`;
+                    lastOutputPath = null; // Reset last uploaded file on unexpected response
                 }
                 terminal.scrollTop = terminal.scrollHeight;
                 fileInput.value = ''; // Clear the file input after processing
@@ -234,6 +267,7 @@
             .catch(error => {
                 terminal.value += '\n' + `An error occurred: ${error}` + '\n' + prompt;
                 terminal.scrollTop = terminal.scrollHeight;
+                lastOutputPath = null; // Reset last uploaded file on error
                 fileInput.value = ''; // Clear the file input after processing
             });
         });
