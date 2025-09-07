@@ -165,7 +165,8 @@
         const uploadButton = document.getElementById('upload-button');
         uploadButton.addEventListener('click',(event)=>{
             const fileInput = document.getElementById('file');
-            const file = fileInput.files[0];
+            const file = fileInput.files[0]; //not reset after click
+
             const userchoice = document.getElementById('user_choice').value;
         
 
@@ -178,10 +179,21 @@
             formData.append('file',file);
 
             let apiEndpoint = '';
-            if (userchoice === "3"){
+            //user selection 
+
+            //user delete_rows
+            if (userchoice === "1"){
+                apiEndpoint = '/api/replacevar';
+                fileInput.value = ''; // Clear the file input after processing
+            } else if (userchoice === "2"){
+                apiEndpoint = '/api/texttonum';
+                fileInput.value = ''; // Clear the file input after processing
+            } else if (userchoice === "3"){
                 apiEndpoint = '/api/deleterows';
+                fileInput.value = ''; // Clear the file input after processing
             } else {
                 terminal.value += `\nThis option is not connect to the backend yet.\n${prompt}`;
+                fileInput.value = ''; // Clear the file input after processing
                 return ;
             }
 
@@ -208,10 +220,12 @@
                     terminal.value += `\nUnexpected response from server: ${text}\n${prompt}`;
                 }
                 terminal.scrollTop = terminal.scrollHeight;
+                fileInput.value = ''; // Clear the file input after processing
             })
             .catch(error => {
                 terminal.value += '\n' + `An error occurred: ${error}` + '\n' + prompt;
                 terminal.scrollTop = terminal.scrollHeight;
+                fileInput.value = ''; // Clear the file input after processing
             });
         });
 

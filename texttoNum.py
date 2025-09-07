@@ -1,4 +1,5 @@
 import pandas as pd
+import sys
 
 def convert_text_to_number(excel_file_path, output_file_path=None):
     # Read the Excel file
@@ -18,8 +19,8 @@ def convert_text_to_number(excel_file_path, output_file_path=None):
     df_numeric.to_excel(output_file_path, index=False)
     print(f"Converted text to numbers where possible. Saved to {output_file_path}")
 
-# if __name__ == "__main__":
-#     if len(sys.argv) < 2:
-#         print("Usage: python texttoNum.py <excel_file_path>")
-#     else:
-#         convert_text_to_number(sys.argv[1])
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python texttoNum.py <excel_file_path>")
+    else:
+        convert_text_to_number(sys.argv[1])

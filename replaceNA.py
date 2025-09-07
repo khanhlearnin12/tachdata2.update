@@ -1,6 +1,6 @@
 import pandas as pd
 
-def replace_na_with_blank(excel_file_path, sheet_name=0, output_file_path=None):
+def replace_na_with_blank(input_path):
     """
     Replaces all 'NA' values (case-insensitive) in an Excel file with blank strings.
 
@@ -14,7 +14,7 @@ def replace_na_with_blank(excel_file_path, sheet_name=0, output_file_path=None):
     """
     try:
         # Read the Excel file into a pandas DataFrame
-        df = pd.read_excel(excel_file_path, sheet_name=sheet_name)
+        df = pd.read_excel(input_path)
 
         # Replace 'NA' (and 'na', 'Na', 'nA') with an empty string
         # .astype(str) ensures all elements are strings before applying .str.replace()
@@ -24,25 +24,29 @@ def replace_na_with_blank(excel_file_path, sheet_name=0, output_file_path=None):
         # Determine the output file path
         if output_file_path is None:
             import os
-            base = os.path.basename(excel_file_path)
+            base = os.path.basename(input_path)
             name, ext = os.path.splitext(base)
             output_file_path = f"{name}_output{ext}"
 
         # Save the modified DataFrame back to an Excel file
         df.to_excel(output_file_path, index=False) # index=False prevents writing DataFrame index as a column
-        print(f"Successfully replaced 'NA' with blanks in '{excel_file_path}' and saved to '{output_file_path}'.")
+        print(f"Successfully replaced 'NA' with blanks in '{input_path}' and saved to '{output_file_path}'.")
 
     except FileNotFoundError:
-        print(f"Error: The file '{excel_file_path}' was not found.")
+        print(f"Error: The file '{input_path}' was not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# if __name__ == "__main__":
-#     import sys
-#     if len(sys.argv) < 2:
-#         print("Usage: python replaceNA.py <excel_file_path>")
-#     else:
-#         replace_na_with_blank(sys.argv[1])
+        return df
+
+        
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python replaceNA.py <excel_file_path>")
+    else:
+        replace_na_with_blank(sys.argv[1])
 
 # --- How to Use ---
 # Example 1: Replace in 'my_data.xlsx' and overwrite the original file
