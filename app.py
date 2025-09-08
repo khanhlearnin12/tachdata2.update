@@ -99,7 +99,7 @@ def save_output_file(df, filename):
     df.to_excel(output_path, index=False)
     return output_path
 
-mode = "prod" #dev or prod
+mode = "dev" #dev or prod
 
 if __name__ == "__main__":
     if mode == "dev":
