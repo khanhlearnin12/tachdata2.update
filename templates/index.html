@@ -196,8 +196,8 @@
             link.click();
             document.body.removeChild(link);
 
-            terminal.value += '\n' + 'Download started...' + '\n' + prompt;
-            terminal.value += `\nDownloaded successful file: ${lastOutputPath}\n${prompt}`;
+            terminal.value += '\n' + 'Download started...' + '\n';
+            terminal.value += `\ nDownloaded successful file: ${lastOutputPath}\n${prompt}`;
             terminal.scrollTop = terminal.scrollHeight;
         });
 
