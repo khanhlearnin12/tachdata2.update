@@ -18,6 +18,8 @@ def convert_text_to_number(excel_file_path, output_file_path=None):
     # Save the DataFrame with numeric columns
     df_numeric.to_excel(output_file_path, index=False)
     print(f"Converted text to numbers where possible. Saved to {output_file_path}")
+    
+    return df_numeric
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
