@@ -96,7 +96,18 @@
         button:hover{
             cursor: pointer;
             background-color: orange;
-        }        
+        }
+        input[type="button"]::file-selector-button:hover{
+            cursor: pointer;
+            background-color: orange;
+        }
+        input[type="button"]::file-selector-button{
+            justify-content: center;
+            padding: 25px ,30px;
+            border-radius: 5px ;
+        }  
+
+        
         </style>
 </head>
 <body>
@@ -107,8 +118,7 @@
         <label for="file">Upload a file:</label>
         <input id="file" type="file" name="file" accept=".txt, .csv, .xlsx">
         <button id="upload-button" type="button">Process File</button>
-        <button id="download-button" type="button">Download File</button>
-        <label for="download-button">Success full file</label>
+        <input id="download-button" name="file" type="button" onclick="download" value="Download File" />
     </form>
 
 
