@@ -119,6 +119,7 @@
         <input id="file" type="file" name="file" accept=".txt, .csv, .xlsx">
         <button id="upload-button" type="button">Process File</button>
         <input id="download-button" name="file" type="button" onclick="download" value="Download File" />
+        <span id="output-file-info" style="margin-left: 20p; color: white;"></span>
     </form>
 
 
@@ -200,14 +201,21 @@
 
             //initiate the download
             const link = document.createElement('a');
-            link.href = `output/${encodeURIComponent(lastOutputPath)}`;
+            link.href = `/output/${encodeURIComponent(lastOutputPath)}`; //correct the path here
             link.download = lastOutputPath; 
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            terminal.value += '\n' + 'Download started...' + '\n';
-            terminal.value += `\n Downloaded successful file: ${lastOutputPath}\n${prompt}`;
+            //Update the terminal just the output path without 'output/'
+            if(data.output_path.startsWith('output/')) {
+                lastOutputPath = data.output_path.replace('output/', '');
+            } else {
+                lastOutputPath = data.output_path;
+            }
+
+            // terminal.value += '\n' + 'Download started...' + '\n';
+            // terminal.value += `\n Downloaded successful file: ${lastOutputPath}\n${prompt}`;
             terminal.scrollTop = terminal.scrollHeight;
         });
 
@@ -262,9 +270,11 @@
                     if (data.error) {
                         terminal.value += `\nError: ${data.error}\n${prompt}`;
                         lastOutputPath = null; // Reset last uploaded file on error
+                        getElementById('output-file-info').textContent = ''; // Clear output file info
                     } else {
                         terminal.value += `\nSuccess: ${data.message}\nOuput file at: ${data.output_path}\n${prompt}`;
                         lastOutputPath = data.output_path; // Store the output file path
+                        document.getElementById('output-file-info').textContent = `Output file ready: ${data.output_path}`; // Show output file info
                     }
                 } else {
                     const text = await response.text();

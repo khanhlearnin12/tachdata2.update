@@ -1,5 +1,6 @@
 #!/usr/bin/python
-from flask import Flask , render_template , url_for , request, jsonify, send_from_directory
+from flask import Flask , render_template , url_for , request, jsonify
+from flask import send_from_directory
 # from flask_ngrok import run_with_ngrok
 import sys
 import os
@@ -10,6 +11,7 @@ from werkzeug.utils import secure_filename # this how to sanitize filename funct
 from Delete_row import delete_rows_with_blank_columns 
 from replaceNA import replace_na_with_blank
 from texttoNum import convert_text_to_number
+
 app = Flask(__name__,template_folder='templates' )
 
 
@@ -126,7 +128,7 @@ def save_output_file(df, filename):
     df.to_excel(output_path, index=False)
     return output_path
 
-mode = "dev" #dev or prod
+mode = "prod" #dev or prod
 
 if __name__ == "__main__":
     if mode == "dev":
