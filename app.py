@@ -104,8 +104,8 @@ def texttonum():
                 })
         except KeyError as e:
             return jsonify({"error": str(e)}), 400
-    
-@app.route('/output/<path:filename>')
+  
+@app.route('/output/<filename>')#download file must be in output folder and specific file name 
 def download_file(filename):
     return send_from_directory('output', filename, as_attachment=True)
 
@@ -127,6 +127,12 @@ def save_output_file(df, filename):
     # Save your data (example for xlsx)
     df.to_excel(output_path, index=False)
     return output_path
+
+@app.route('/account',methods=["POST"])
+def account():
+    return 
+
+
 
 mode = "prod" #dev or prod
 

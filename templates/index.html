@@ -192,30 +192,24 @@
 
         // Download button event listener
         const downloadLabel = document.querySelector('label[for="download-button"]');
+        //download place 
         download.addEventListener('click', () => {
             if (!lastOutputPath) {
                 terminal.value += '\n' + 'No file available for download. Please process a file first.' + '\n' + prompt;
                 terminal.scrollTop = terminal.scrollHeight;
                 return;
             }
+            //Remove the previous download link if exists
+            let filename = lastOutputPath.startsWith('output/') ? lastOutputPath.replace('output/', '') : lastOutputPath;
 
             //initiate the download
             const link = document.createElement('a');
-            link.href = `/output/${encodeURIComponent(lastOutputPath)}`; //correct the path here
-            link.download = lastOutputPath; 
+            link.href = `/output/${encodeURIComponent(filename)}`; //correct the path here
+            link.download = filename; 
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
 
-            //Update the terminal just the output path without 'output/'
-            if(data.output_path.startsWith('output/')) {
-                lastOutputPath = data.output_path.replace('output/', '');
-            } else {
-                lastOutputPath = data.output_path;
-            }
-
-            // terminal.value += '\n' + 'Download started...' + '\n';
-            // terminal.value += `\n Downloaded successful file: ${lastOutputPath}\n${prompt}`;
             terminal.scrollTop = terminal.scrollHeight;
         });
 
