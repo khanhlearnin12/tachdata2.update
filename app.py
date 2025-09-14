@@ -135,7 +135,10 @@ if __name__ == "__main__":
         app.run(debug=True, host='localhost', port=8080)
     elif mode == "prod" :
         print("login to the webpage as http://localhost:8080")
-        command = "start cmd /k ngrok http http://localhost:8080"
+        #this is for windows
+            #command = "start powershell /k ngrok http http://localhost:8080"
+        #this is for linux
+        command = 'gnome-terminal --tab --title="ngrok" -- bash -c "ngrok http http://localhost:8080; exec bash"'
         subprocess.Popen(command, shell=True)
         serve(app, host='localhost', port=8080, threads=2, url_prefix="/tachdata")
     else :
