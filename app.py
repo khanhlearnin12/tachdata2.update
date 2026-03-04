@@ -12,7 +12,7 @@ from Delete_row import delete_rows_with_blank_columns
 from replaceNA import replace_na_with_blank
 from texttoNum import convert_text_to_number
 
-app = Flask(__name__,template_folder='templates' )
+app = Flask(__name__,template_folder='templates')
 
 
 # make sure that uploads folder is create and configure
@@ -138,15 +138,10 @@ mode = "prod" #dev or prod
 
 if __name__ == "__main__":
     if mode == "dev":
-        app.run(debug=True, host='localhost', port=8080)
+        app.run(debug=True, host='0.0.0.0', port=5000)
     elif mode == "prod" :
-        print("login to the webpage as http://localhost:8080")
-        #this is for windows
-            #command = "start powershell /k ngrok http http://localhost:8080"
-        #this is for linux
-        command = 'gnome-terminal --tab --title="ngrok" -- bash -c "ngrok http http://localhost:8080; exec bash"'
-        subprocess.Popen(command, shell=True)
-        serve(app, host='localhost', port=8080, threads=2, url_prefix="/tachdata")
+        print("login to the webpage as http://localhost:5000")
+        serve(app, host='0.0.0.0', port=5000, threads=2)
     else :
         print("Unknow command")
         exit
