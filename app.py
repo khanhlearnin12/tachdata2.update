@@ -128,11 +128,15 @@ def save_output_file(df, filename):
     df.to_excel(output_path, index=False)
     return output_path
 
-@app.route('/account',methods=["POST"])
+@app.route('/account')
 def account():
-    return 
+    image_url = url_for('static', filename='/background/bigdatebackground.jpg')
+    return render_template('login.html',image_url = image_url)
 
-
+@app.route('/signup')
+def signup():
+    image_url  = url_for('static', filename='/icons/terminal1.png')
+    return render_template('signup.html',image_url = image_url)
 
 mode = "prod" #dev or prod
 
