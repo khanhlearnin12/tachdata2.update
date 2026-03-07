@@ -130,11 +130,13 @@ def save_output_file(df, filename):
     df.to_excel(output_path, index=False)
     return output_path
 
-@app.route('/account',methods=["POST"])
+@app.route('/account')
 def account():
-    return 
+    image_url = url_for('static', filename='/background/bigdatebackground.jpg')
+    return render_template('login.html',image_url = image_url)
 
-#this is mode for deloy and production
+
+
 mode = "prod" #dev or prod
 
 if __name__ == "__main__":
