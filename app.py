@@ -14,7 +14,6 @@ from texttoNum import convert_text_to_number
 
 app = Flask(__name__,template_folder='templates')
 
-
 # make sure that uploads folder is create and configure
 UPLOAD_FOLDER  = 'uploads' #hold the directory name to know that file upload could be store 
 if not os.path.exists(UPLOAD_FOLDER): #if not exsite 
@@ -23,12 +22,13 @@ if not os.path.exists(UPLOAD_FOLDER): #if not exsite
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # This makes the path accessible from anywhere within the Flask application using app.config['UPLOAD_FOLDER'].
 
 
-
+#404 page help notice page are broken 
 @app.route('/')
 def waiting_web_page():
     image_url = url_for('static', filename='/picture/background/download.jpg')
     return render_template('404index.html')
 
+#function delete row 
 @app.route('/api/deleterows', methods=['POST'])
 def delete_rows():
     if  'file' not in request.files: #file presence check 
@@ -54,7 +54,7 @@ def delete_rows():
         except KeyError as e:
             return jsonify({"error": str(e)}), 400
 
-
+# replace variable 
 @app.route('/api/replacevar',methods = ['POST'])
 def replacevar():
     if  'file' not in request.files: #file presence check 
@@ -80,6 +80,7 @@ def replacevar():
         except KeyError as e:
             return jsonify({"error": str(e)}), 400
 
+#function text to num 
 @app.route('/api/texttonum',methods =["POST"])
 def texttonum():
     if  'file' not in request.files: #file presence check 
@@ -109,6 +110,7 @@ def texttonum():
 def download_file(filename):
     return send_from_directory('output', filename, as_attachment=True)
 
+# main part 
 @app.route('/main')
 def index(sys=sys):
     image_url  = url_for('static', filename='/icons/terminal1.png')
@@ -132,8 +134,7 @@ def save_output_file(df, filename):
 def account():
     return 
 
-
-
+#this is mode for deloy and production
 mode = "prod" #dev or prod
 
 if __name__ == "__main__":
