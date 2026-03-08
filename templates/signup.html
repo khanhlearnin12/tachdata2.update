@@ -7,18 +7,21 @@
 </head>
 <body>
     <H1>Sign Up Page</H1>
-    <form action="/account">
+    <form action="/", method="POST">
         <label for="Username">Username:</label><br>
-        <input type="text" name="username" id="username"><br>
+        <input type="text" name="username" id="username" placeholder="Enter username" required><br>
+
         <label for="password">Password:</label><br>
-        <input type="text" name="password" id="password"><br>
+        <input type="password" name="password" id="password" placeholder="Enter password" required><br>
+
         <label for="gmail">Gmail</label><br>
-        <input type="text" name="Gmail" id="gmail"><br>
+        <input type="email" name="gmail" id="gmail" placeholder="Enter email" required><br>
+
         <input type="submit" value="Submit">
     </form>
 
     <script>
-        
+
     </script>
 </body>
 </html>

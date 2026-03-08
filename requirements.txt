@@ -2,3 +2,5 @@ pandas
 flask 
 openpyxl
 waitress
+flask-sqlalchemy
+Werkzeug

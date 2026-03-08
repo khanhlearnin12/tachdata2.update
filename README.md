@@ -56,3 +56,9 @@ To expose the web interface to the internet, you can use the `onlinestart.sh` sc
 *   **Error Handling:** The `replaceNA.py` script includes basic error handling for file-not-found errors.
 *   **Configuration:** The project does not use a dedicated configuration file. Configuration parameters, such as the columns to check in `Delete_row.py`, are hardcoded in the scripts.
 *   **Testing:** There are no automated tests in the project.
+
+### What I expecting to build app 
+- [ ] build up sign up page, sync with data base 
+- [ ] build login page , sync with data base, authentication, 
+- [ ] one time authetication.
+- [ ] deploy on server 

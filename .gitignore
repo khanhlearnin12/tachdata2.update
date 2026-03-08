@@ -10,5 +10,6 @@
 /test.py
 /uploads
 /output
-
+/instance
+/instance/*
 

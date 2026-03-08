@@ -1,6 +1,6 @@
-#!/usr/bin/python
 from flask import Flask , render_template , url_for , request, jsonify
 from flask import send_from_directory
+from flask_sqlalchemy import SQLAlchemy
 # from flask_ngrok import run_with_ngrok
 import sys
 import os
@@ -8,11 +8,28 @@ import pandas as pd
 import subprocess
 from waitress import serve
 from werkzeug.utils import secure_filename # this how to sanitize filename function 
+from werkzeug.security import generate_password_hash 
 from Delete_row import delete_rows_with_blank_columns 
 from replaceNA import replace_na_with_blank
 from texttoNum import convert_text_to_number
 
+#create app on flash
 app = Flask(__name__,template_folder='templates')
+# connect to the database 
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///users.db'
+db = SQLAlchemy(app)
+
+# Định nghĩa bảng User
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False) # Lưu hash, không lưu plain text!
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+with app.app_context():
+    db.create_all()
+
+
 
 # make sure that uploads folder is create and configure
 UPLOAD_FOLDER  = 'uploads' #hold the directory name to know that file upload could be store 
@@ -23,7 +40,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # This makes the path accessible fro
 
 
 #404 page help notice page are broken 
-@app.route('/')
+@app.route('/error')
 def waiting_web_page():
     image_url = url_for('static', filename='/picture/background/download.jpg')
     return render_template('404index.html')
@@ -135,16 +152,50 @@ def account():
     image_url = url_for('static', filename='/background/bigdatebackground.jpg')
     return render_template('login.html',image_url = image_url)
 
+@app.route('/login')
+def login():
+    return render_template("login.html")
 
 
-mode = "prod" #dev or prod
+
+# đăng ký 
+@app.route('/')
+def signup():
+    return render_template("signup.html")
+
+#giải quyết vấn đề data base
+@app.route('/', methods=['POST'])
+def signup_process():
+    # Lấy dữ liệu từ form
+    user = request.form.get('username')
+    pw = request.form.get('password')
+    email = request.form.get('gmail')
+
+    # Hash mật khẩu (Best practice cho dân Cybersecurity như ông)
+    hashed_pw = generate_password_hash(pw, method='pbkdf2:sha256')
+
+    # Lưu vào databa
+    new_user = User(username=user, password=hashed_pw, email=email)
+    try:
+        print("[*] THÔNG TIN ĐANG ĐƯỢC GHI... ")
+        db.session.add(new_user)
+        db.session.commit()
+        print(" Thông tin đã được ghi thành công. ")
+        return 
+    
+    except Exception as e:
+        db.session.rollback()
+        print(f'[!] dataabase tu choi luu{e}')
+        return f"Lỗi rồi! Có thể username hoặc email đã tồn tại as {e}." 
+    
+mode = "dev" #dev or prod
 
 if __name__ == "__main__":
     if mode == "dev":
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        app.run(debug=True, host='0.0.0.0', port=8080)
     elif mode == "prod" :
-        print("login to the webpage as http://localhost:5000")
-        serve(app, host='0.0.0.0', port=5000, threads=2)
+        print("login to the webpage as http://localhost:8080")
+        serve(app, host='0.0.0.0', port=8080, threads=2)
     else :
         print("Unknow command")
         exit
